@@ -1,3 +1,4 @@
+import React from "react";
 import { TouchableOpacity, Text, View } from "react-native";
 import { DrawerScreenProps } from "@react-navigation/drawer";
 import { Timer } from "@components";
@@ -5,6 +6,18 @@ import { Timer } from "@components";
 type HomeProps = DrawerScreenProps<RootParamList, "Home">;
 
 export default function Home({ navigation }: HomeProps) {
+  const fetchUser = async () => {
+    try {
+      const user = await fetch("http://192.168.1.21:8080/users/1").then(res => res.json());
+      console.log(user);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchUser();
+  });
   return (
     <>
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
