@@ -1,4 +1,5 @@
 type RootParamList = {
+  Login: undefined;
   Home: { name: string };
   Settings: undefined;
   Profile: undefined;
