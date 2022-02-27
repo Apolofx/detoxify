@@ -7,3 +7,5 @@ export const SCREENS = {
   PROFILE: "Profile",
   TEAM: "Team"
 };
+
+export const AUTH_TOKEN_NAME = "DETOXIFY_AUTH_TOKEN"

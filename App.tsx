@@ -27,16 +27,14 @@ const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
 function App() {
-  const { error, isLoading, token } = useAuthentication();
-  console.log(token);
+  const { error, isLoading, token, isAuthenticated } = useAuthentication();
   
-  if(!token) return <Login /> //Aca puedo retornar un stack navigator con el login y signup 
+  if(!isAuthenticated) return <Login /> //Aca puedo retornar un stack navigator con el login y signup 
   return (
     <NavigationContainer>
       {/* if authenticated initial route is home else login */}
       <Drawer.Navigator initialRouteName="Home">
         <Drawer.Screen name={SCREENS.HOME} component={Home} />
-        <Drawer.Screen name={SCREENS.LOGIN} component={Login} />
         <Drawer.Screen name={SCREENS.PROFILE} component={Profile} />
         <Drawer.Screen name={SCREENS.STATS} component={Statistics} />
         <Drawer.Screen name={SCREENS.TEAM} component={Team} />
