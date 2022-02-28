@@ -7,6 +7,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+//UI Provider
+import { NativeBaseProvider } from "native-base";
+import { NativeBaseConfig } from "@config";
 //Screens
 import { SCREENS } from "@config";
 import {
@@ -22,26 +25,43 @@ import {
 //Helpers
 import { useAuthentication } from "@hooks";
 
+import { IconButton } from "@components";
+
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
 function App() {
-  const { error, isLoading, token, isAuthenticated } = useAuthentication();
-  
-  if(!isAuthenticated) return <Login /> //Aca puedo retornar un stack navigator con el login y signup 
+  const authentication = useAuthentication();
+  const { isAuthenticated, isLoading } = authentication;
   return (
-    <NavigationContainer>
-      {/* if authenticated initial route is home else login */}
-      <Drawer.Navigator initialRouteName="Home">
-        <Drawer.Screen name={SCREENS.HOME} component={Home} />
-        <Drawer.Screen name={SCREENS.PROFILE} component={Profile} />
-        <Drawer.Screen name={SCREENS.STATS} component={Statistics} />
-        <Drawer.Screen name={SCREENS.TEAM} component={Team} />
-        <Drawer.Screen name={SCREENS.SETTINGS} component={Settings} />
-        <Drawer.Screen name={SCREENS.SUPPORT} component={Support} />
-      </Drawer.Navigator>
-    </NavigationContainer>
+    <NativeBaseProvider config={NativeBaseConfig}>
+      {!isAuthenticated ? (
+        <Login authentication={authentication} />
+      ) : (
+        <NavigationContainer>
+          <Drawer.Navigator
+            initialRouteName="Home"
+            screenOptions={{
+              headerRight: () => (
+                <IconButton
+                  type="log-out-outline"
+                  onPress={() => authentication.signOut()}
+                  touchableProps={{ style: { marginRight: 16 } }}
+                />
+              ),
+            }}
+          >
+            <Drawer.Screen name={SCREENS.HOME} component={Home} />
+            <Drawer.Screen name={SCREENS.PROFILE} component={Profile} />
+            <Drawer.Screen name={SCREENS.STATS} component={Statistics} />
+            <Drawer.Screen name={SCREENS.TEAM} component={Team} />
+            <Drawer.Screen name={SCREENS.SETTINGS} component={Settings} />
+            <Drawer.Screen name={SCREENS.SUPPORT} component={Support} />
+          </Drawer.Navigator>
+        </NavigationContainer>
+      )}
+    </NativeBaseProvider>
   );
 }
 

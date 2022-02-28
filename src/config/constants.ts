@@ -5,7 +5,7 @@ export const SCREENS = {
   SUPPORT: "Support",
   STATS: "Statistics",
   PROFILE: "Profile",
-  TEAM: "Team"
+  TEAM: "Team",
 };
 
-export const AUTH_TOKEN_NAME = "DETOXIFY_AUTH_TOKEN"
+export const AUTH_TOKEN_NAME = "DETOXIFY_AUTH_TOKEN";
