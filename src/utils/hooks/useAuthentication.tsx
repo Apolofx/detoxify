@@ -5,17 +5,17 @@ import { AUTH_TOKEN_NAME } from "@config";
 /**
  * This hook manages users authentication state
  */
-export default function useAuthentication() {
+export default function useAuthentication(): Authenticator {
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState(false);
-  const [token, setToken] = React.useState<string | void>();
+  const [token, setToken] = React.useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = React.useState<boolean>(false);
 
   const signOut = async () => {
     await SecureStore.deleteItemAsync(AUTH_TOKEN_NAME);
     setIsAuthenticated(false);
   };
-  
+
   const signInWithEmail = async (
     email: string,
     password: string,
@@ -23,20 +23,29 @@ export default function useAuthentication() {
   ) => {
     try {
       // fetch backend to get token
-      const token = await fetch("http://192.168.0.103:8081/auth", {
+      setIsLoading(true);
+      const token = await fetch("http://dev.detoxify.ar/auth/login", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ email, password }),
       })
         .then((res) => {
-          if (res.ok) return res.json();
+          if (!res.ok) throw new Error(JSON.stringify(res));
+          return res.json();
         })
         .then((res) => res.token);
+
       await SecureStore.setItemAsync(AUTH_TOKEN_NAME, token);
+      console.log("TOKEN >>>", token);
       setIsAuthenticated(true);
       setToken(token);
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
       setError(true);
+    } finally {
+      setIsLoading(false);
     }
   };
   const signUpWithEmail = () => {};
@@ -52,7 +61,7 @@ export default function useAuthentication() {
         }
       }
     } catch (e) {
-      console.log(e);
+      console.log(JSON.stringify(e));
       setError(true);
     } finally {
       setIsLoading(false);
@@ -60,12 +69,8 @@ export default function useAuthentication() {
   };
   React.useEffect(() => {
     //TODO REMOVE THIS MOCK TOKEN
-    // fetchLocalAuthState();
-    signInWithEmail("nacho", "cacho");
-    const timeout = setTimeout(() => {
-      signOut();
-    }, 1000);
-    return () => clearTimeout(timeout);
+    fetchLocalAuthState();
+    // signOut()
   }, []);
   return {
     isLoading,
@@ -77,3 +82,17 @@ export default function useAuthentication() {
     signUpWithEmail,
   };
 }
+
+export type Authenticator = {
+  isLoading: boolean;
+  error: boolean;
+  token: string | null;
+  isAuthenticated: boolean;
+  signOut: () => void;
+  signInWithEmail: (
+    email: string,
+    password: string,
+    callback?: Function
+  ) => Promise<void>;
+  signUpWithEmail: () => void;
+};

@@ -1,17 +1,20 @@
 import React from "react";
-import { TouchableOpacity, Text, View } from "react-native";
+import { TouchableOpacity, Text } from "react-native";
 import { DrawerScreenProps } from "@react-navigation/drawer";
 import { Timer } from "@components";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type HomeProps = DrawerScreenProps<RootParamList, "Home">;
 
 export default function Home({ navigation }: HomeProps) {
   const fetchUser = async () => {
     try {
-      const user = await fetch("http://192.168.1.21:8080/users/1").then(res => res.json());
-      console.log(user);
+      const user = await fetch("http://192.168.1.21:8080/users/1").then((res) =>
+        res.json()
+      );
+      console.log(JSON.stringify(user));
     } catch (e) {
-      console.log(e);
+      console.log(JSON.stringify(e));
     }
   };
 
@@ -20,7 +23,9 @@ export default function Home({ navigation }: HomeProps) {
   });
   return (
     <>
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <SafeAreaView
+        style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+      >
         <Text>Home Screen</Text>
         <Timer />
         <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
@@ -35,7 +40,7 @@ export default function Home({ navigation }: HomeProps) {
         <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
           <Text>Settings</Text>
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     </>
   );
 }
