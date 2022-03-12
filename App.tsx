@@ -14,7 +14,7 @@ import { NativeBaseConfig } from "@config";
 import { SCREENS } from "@config";
 import {
   Home,
-  Login,
+  Auth,
   Profile,
   Settings,
   Statistics,
@@ -37,7 +37,7 @@ function App() {
   return (
     <NativeBaseProvider config={NativeBaseConfig}>
       {!isAuthenticated ? (
-        <Login authentication={authentication} />
+        <Auth authentication={authentication} />
       ) : (
         <NavigationContainer>
           <Drawer.Navigator
