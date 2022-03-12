@@ -8,6 +8,7 @@ import { AUTH_TOKEN_NAME } from "@config";
 export default function useAuthentication(): Authenticator {
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState("");
   const [token, setToken] = React.useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = React.useState<boolean>(false);
 
@@ -24,6 +25,7 @@ export default function useAuthentication(): Authenticator {
     try {
       // fetch backend to get token
       setIsLoading(true);
+      setError(false);
       const token = await fetch("http://dev.detoxify.ar/auth/login", {
         method: "POST",
         headers: {
@@ -38,17 +40,68 @@ export default function useAuthentication(): Authenticator {
         .then((res) => res.token);
 
       await SecureStore.setItemAsync(AUTH_TOKEN_NAME, token);
-      console.log("TOKEN >>>", token);
       setIsAuthenticated(true);
       setToken(token);
     } catch (e: any) {
-      console.log(e);
+      const error = JSON.parse(e.message);
+      if (error?.status) {
+        switch (Number(error.status)) {
+          case 401:
+            setErrorMessage("Wrong email or password");
+            break;
+          default:
+            break;
+        }
+      }
       setError(true);
     } finally {
+      callback && callback();
       setIsLoading(false);
     }
   };
-  const signUpWithEmail = () => {};
+
+  const signUpWithEmail = async (
+    email: string,
+    password: string,
+    callback?: Function
+  ) => {
+    try {
+      // fetch backend to get token
+      setIsLoading(true);
+      setError(false);
+      const token = await fetch("http://dev.detoxify.ar/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error(JSON.stringify(res));
+          return res.json();
+        })
+        .then((res) => res.token);
+
+      await SecureStore.setItemAsync(AUTH_TOKEN_NAME, token);
+      setIsAuthenticated(true);
+      setToken(token);
+    } catch (e: any) {
+      const error = JSON.parse(e.message);
+      if (error?.status) {
+        switch (Number(error.status)) {
+          case 409:
+            setErrorMessage("Email already in use");
+            break;
+          default:
+            break;
+        }
+      }
+      setError(true);
+    } finally {
+      callback && callback();
+      setIsLoading(false);
+    }
+  };
 
   const fetchLocalAuthState = async () => {
     try {
@@ -73,6 +126,7 @@ export default function useAuthentication(): Authenticator {
     // signOut()
   }, []);
   return {
+    errorMessage,
     isLoading,
     error,
     token,
@@ -82,17 +136,3 @@ export default function useAuthentication(): Authenticator {
     signUpWithEmail,
   };
 }
-
-export type Authenticator = {
-  isLoading: boolean;
-  error: boolean;
-  token: string | null;
-  isAuthenticated: boolean;
-  signOut: () => void;
-  signInWithEmail: (
-    email: string,
-    password: string,
-    callback?: Function
-  ) => Promise<void>;
-  signUpWithEmail: () => void;
-};

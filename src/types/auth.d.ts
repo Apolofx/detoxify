@@ -1,6 +1,7 @@
 type Authenticator = {
   isLoading: boolean;
   error: boolean;
+  errorMessage: string;
   token: string | null;
   isAuthenticated: boolean;
   signOut: () => void;
@@ -9,5 +10,9 @@ type Authenticator = {
     password: string,
     callback?: Function
   ) => Promise<void>;
-  signUpWithEmail: () => void;
+  signUpWithEmail: (
+    email: string,
+    password: string,
+    callback?: Function
+  ) => Promise<void>;
 };
