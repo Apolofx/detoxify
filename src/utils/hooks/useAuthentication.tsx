@@ -1,6 +1,13 @@
 import * as React from "react";
 import * as SecureStore from "expo-secure-store";
+import jwt_decode from "jwt-decode";
 import { AUTH_TOKEN_NAME } from "@config";
+
+type DecodedToken = {
+  id: number;
+  iat: number;
+  role: "REGULAR" | "ADMIN";
+};
 
 /**
  * This hook manages users authentication state
@@ -10,6 +17,7 @@ export default function useAuthentication(): Authenticator {
   const [error, setError] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
   const [token, setToken] = React.useState<string | null>(null);
+  const [userID, setUserID] = React.useState<number | null>(null);
   const [isAuthenticated, setIsAuthenticated] = React.useState<boolean>(false);
 
   const signOut = async () => {
@@ -42,6 +50,7 @@ export default function useAuthentication(): Authenticator {
       await SecureStore.setItemAsync(AUTH_TOKEN_NAME, token);
       setIsAuthenticated(true);
       setToken(token);
+      setUserID((jwt_decode(token) as DecodedToken).id);
     } catch (e: any) {
       const error = JSON.parse(e.message);
       if (error?.status) {
@@ -84,7 +93,7 @@ export default function useAuthentication(): Authenticator {
 
       await SecureStore.setItemAsync(AUTH_TOKEN_NAME, token);
       setIsAuthenticated(true);
-      setToken(token);
+      setUserID((jwt_decode(token) as DecodedToken).id);
     } catch (e: any) {
       const error = JSON.parse(e.message);
       if (error?.status) {
@@ -111,6 +120,7 @@ export default function useAuthentication(): Authenticator {
         if (token) {
           setIsAuthenticated(true);
           setToken(token);
+          setUserID((jwt_decode(token) as DecodedToken).id);
         }
       }
     } catch (e) {
@@ -121,15 +131,14 @@ export default function useAuthentication(): Authenticator {
     }
   };
   React.useEffect(() => {
-    //TODO REMOVE THIS MOCK TOKEN
     fetchLocalAuthState();
-    // signOut()
   }, []);
   return {
     errorMessage,
     isLoading,
     error,
     token,
+    userID,
     isAuthenticated,
     signOut,
     signInWithEmail,

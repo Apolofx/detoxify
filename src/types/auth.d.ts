@@ -3,6 +3,7 @@ type Authenticator = {
   error: boolean;
   errorMessage: string;
   token: string | null;
+  userID: number | null;
   isAuthenticated: boolean;
   signOut: () => void;
   signInWithEmail: (
