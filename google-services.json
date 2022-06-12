@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1061801850456",
+    "project_id": "detoxify-337716",
+    "storage_bucket": "detoxify-337716.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1061801850456:android:d19da177ab43a802293c2d",
+        "android_client_info": {
+          "package_name": "com.detoxify.detoxify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1061801850456-72qd4aa6ribn171vigsu3140q5tq84jk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqCismhlVtqtjbXznjhdyprIGzQvQaKkU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1061801850456-72qd4aa6ribn171vigsu3140q5tq84jk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
