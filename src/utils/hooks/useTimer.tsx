@@ -25,23 +25,25 @@ export default function useTimer({ startDate = new Date() }: ITimer): Time {
     days: 0,
     months: 0,
   });
+
+  const calculateTime = () => {
+    const now = new Date();
+    let diff = (now.getTime() - startDate.getTime()) / 1000; //diff in seconds
+    const seconds = Math.floor(diff % 60);
+    diff = Math.floor(diff / 60);
+    const minutes = diff % 60;
+    diff = Math.floor(diff / 60);
+    const hours = diff % 24;
+    diff = Math.floor(diff / 24);
+    const days = diff;
+    const months = Math.floor((now.getTime() - startDate.getTime()) / 2.628e9);
+    setTime((prev) => ({ ...prev, seconds, minutes, hours, days, months }));
+  };
+
   React.useEffect(() => {
-    const interval = setInterval(() => {
-      const now = new Date();
-      let diff = (now.getTime() - startDate.getTime()) / 1000; //diff in seconds
-      const seconds = Math.floor(diff % 60);
-      diff = Math.floor(diff / 60);
-      const minutes = diff % 60;
-      diff = Math.floor(diff / 60);
-      const hours = diff % 24;
-      diff = Math.floor(diff / 24);
-      const days = diff;
-      const months = Math.floor(
-        (now.getTime() - startDate.getTime()) / 2.628e9
-      );
-      setTime((prev) => ({ ...prev, seconds, minutes, hours, days, months }));
-    }, 1000);
+    calculateTime();
+    const interval = setInterval(calculateTime, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [startDate]);
   return time;
 }
