@@ -2,6 +2,7 @@ import * as React from "react";
 import * as SecureStore from "expo-secure-store";
 import jwt_decode from "jwt-decode";
 import { AUTH_TOKEN_NAME } from "@config";
+import { getExpoPushTokenAsync } from "expo-notifications";
 
 type DecodedToken = {
   id: number;
@@ -46,6 +47,20 @@ export default function useAuthentication(): Authenticator {
           return res.json();
         })
         .then((res) => res.token);
+
+      //UPDATE EXPONENT PUSH TOKEN
+      await fetch(`http://dev.detoxify.ar/api/users/${userID}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          notificationToken: (await getExpoPushTokenAsync()).data,
+        }),
+      })
+        .then((res) => console.log(JSON.stringify(res)))
+        .catch((err) => console.log(JSON.stringify(err)));
 
       await SecureStore.setItemAsync(AUTH_TOKEN_NAME, token);
       setIsAuthenticated(true);
