@@ -16,9 +16,9 @@ export default function Timer({ startDate }: ITimer) {
     startDate.getMonth() + 1
   }/${startDate.getFullYear()}`;
   const [fontsLoaded] = useFonts({ Nunito_400Regular });
-  if (!fontsLoaded) return <AppLoading />;
-  return (
-    <View style={styles.timerContainer}>
+
+  const TimeData = () => (
+    <>
       <Text style={styles.timerText}>No fumas desde {HumanDate}</Text>
       <Text style={styles.timerText}>{days} días</Text>
       <Text style={styles.timerText}>
@@ -27,6 +27,14 @@ export default function Timer({ startDate }: ITimer) {
         }:${seconds < 10 ? `0${seconds}` : seconds}`}
         {} horas
       </Text>
+    </>
+  );
+
+  if (!fontsLoaded) return <AppLoading />;
+
+  return (
+    <View style={styles.timerContainer}>
+      <TimeData />
     </View>
   );
 }

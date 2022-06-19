@@ -3,6 +3,7 @@ import * as SecureStore from "expo-secure-store";
 import jwt_decode from "jwt-decode";
 import { AUTH_TOKEN_NAME } from "@config";
 import { getExpoPushTokenAsync } from "expo-notifications";
+import { API_BASE_URL } from "@env";
 
 type DecodedToken = {
   id: number;
@@ -35,7 +36,7 @@ export default function useAuthentication(): Authenticator {
       // fetch backend to get token
       setIsLoading(true);
       setError(false);
-      const token = await fetch("http://dev.detoxify.ar/auth/login", {
+      const token = await fetch(API_BASE_URL + "/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -49,7 +50,7 @@ export default function useAuthentication(): Authenticator {
         .then((res) => res.token);
 
       //UPDATE EXPONENT PUSH TOKEN
-      await fetch(`http://dev.detoxify.ar/api/users/${userID}`, {
+      await fetch(`${API_BASE_URL}/api/users/${userID}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -59,8 +60,8 @@ export default function useAuthentication(): Authenticator {
           notificationToken: (await getExpoPushTokenAsync()).data,
         }),
       })
-        .then((res) => console.log(JSON.stringify(res)))
-        .catch((err) => console.log(JSON.stringify(err)));
+        .then((res) => console.log("EXPONENT PUSH TOKEN RESPONSE >> ",JSON.stringify(res)))
+        .catch((err) => console.log("EXPONENT PUSH TOKEN RESPONSE >> ", JSON.stringify(err)));
 
       await SecureStore.setItemAsync(AUTH_TOKEN_NAME, token);
       setIsAuthenticated(true);
@@ -93,7 +94,7 @@ export default function useAuthentication(): Authenticator {
       // fetch backend to get token
       setIsLoading(true);
       setError(false);
-      const token = await fetch("http://dev.detoxify.ar/auth/register", {
+      const token = await fetch(API_BASE_URL + "/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -110,7 +111,7 @@ export default function useAuthentication(): Authenticator {
       setIsAuthenticated(true);
       setUserID((jwt_decode(token) as DecodedToken).id);
     } catch (e: any) {
-      const error = JSON.parse(e.message);
+      const error = JSON.parse(e?.message);
       if (error?.status) {
         switch (Number(error.status)) {
           case 409:
@@ -139,7 +140,7 @@ export default function useAuthentication(): Authenticator {
         }
       }
     } catch (e) {
-      console.log(JSON.stringify(e));
+      console.log("FETCH LOCAL AUTH STATE >>> ", JSON.stringify(e));
       setError(true);
     } finally {
       setIsLoading(false);

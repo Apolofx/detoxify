@@ -5,6 +5,7 @@ import { Timer } from "@components";
 import { useAuthentication } from "@hooks";
 import { Spinner, VStack } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
+import { fetchUserData } from "@utils";
 
 type ProfileProps = DrawerScreenProps<RootParamList, "Profile">;
 export default function Profile({ navigation, route }: ProfileProps) {
@@ -12,21 +13,16 @@ export default function Profile({ navigation, route }: ProfileProps) {
   const [userData, setUserData] = React.useState<any>();
   const [isLoading, setIsLoading] = React.useState(true);
   React.useEffect(() => {
-    const fetchUserData = async () => {
-      await fetch(`http://dev.detoxify.ar/api/users/${userID}/snapshot`, {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => res.json())
+    if (token !== null && userID !== null)
+      fetchUserData(userID, token)
         .then((data) => {
           setUserData((prev: any) => ({ ...prev, ...data }));
-          console.log(data);
+          console.log("USER DATA >> ", data);
         })
-        .catch((e) => console.log(e))
+        .catch((e) => {
+          console.log(JSON.stringify(e));
+        })
         .finally(() => setIsLoading(false));
-    };
-    if (token !== null && userID !== null) fetchUserData();
   }, [token, userID]);
 
   return (
