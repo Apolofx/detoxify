@@ -20,7 +20,7 @@ export default function Profile({ navigation, route }: ProfileProps) {
           console.log("USER DATA >> ", data);
         })
         .catch((e) => {
-          console.log(JSON.stringify(e));
+          console.log("ERROR FETCHING USER DATA >>> ", JSON.stringify(e));
         })
         .finally(() => setIsLoading(false));
   }, [token, userID]);
