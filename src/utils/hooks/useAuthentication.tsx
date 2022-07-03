@@ -36,7 +36,7 @@ export default function useAuthentication(): Authenticator {
       // fetch backend to get token
       setIsLoading(true);
       setError(false);
-      const { token } = await fetch(`${API_BASE_URL}/auth/login`, {
+      const { token } = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -101,7 +101,7 @@ export default function useAuthentication(): Authenticator {
       // fetch backend to get token
       setIsLoading(true);
       setError(false);
-      const token = await fetch(`${API_BASE_URL}/auth/register`, {
+      const token = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
