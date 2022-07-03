@@ -16,7 +16,7 @@ export default function Home({ navigation, route }: HomeProps) {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: "purple",
+        tabBarActiveTintColor: "#B721FF",
         headerShown: false,
         tabBarLabelPosition: "beside-icon",
       }}
@@ -45,6 +45,8 @@ export default function Home({ navigation, route }: HomeProps) {
           tabBarIcon: ({ color, focused, size }) => (
             <Ionicons name="people" color={color} size={size} />
           ),
+          tabBarBadge: "1",
+          tabBarBadgeStyle: { backgroundColor: "#B721FF" },
         }}
         name="Equipo"
         component={Team}

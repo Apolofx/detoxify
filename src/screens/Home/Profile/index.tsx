@@ -3,10 +3,9 @@ import { TouchableOpacity } from "react-native";
 import { DrawerScreenProps } from "@react-navigation/drawer";
 import { Timer } from "@components";
 import { useAuthentication } from "@hooks";
-import { Spinner, VStack } from "native-base";
+import { Spinner, VStack, Button } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
 import { fetchUserData } from "@utils";
-import MaskedView from "@react-native-masked-view/masked-view";
 
 type ProfileProps = DrawerScreenProps<RootParamList, "Profile">;
 export default function Profile({ navigation, route }: ProfileProps) {
@@ -45,7 +44,20 @@ export default function Profile({ navigation, route }: ProfileProps) {
         <Spinner color="purple" size="lg" />
       ) : (
         <>
-          <Timer startDate={new Date(userData?.userDetails?.quitAt)} />
+          {userData?.userDetails?.quitAt ? (
+            <Timer startDate={new Date(userData.userDetails.quitAt)} />
+          ) : (
+            <Button
+              onPress={() =>
+                setUserData((prev: any) => ({
+                  ...prev,
+                  userDetails: { ...prev.userDetails, quitAt: new Date() },
+                }))
+              }
+            >
+              Comenzar
+            </Button>
+          )}
           <TouchableOpacity onPress={() => alert("Panic attack")}>
             <Ionicons name="alert-circle" color="white" size={50} />
           </TouchableOpacity>
